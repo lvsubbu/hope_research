@@ -1,13 +1,13 @@
 
 const express = require('express')
-const app = express()
+const router = express.Router()
 const port = 3000
 
 /* No database, just local memory for one user TODO */
 var user = {};
 var loggedin = false;
 
-app.post('/create', (req, res) => {
+router.post('/user/create', (req, res) => {
 		
 	user['name'] = req.param('name');
 	user['email'] = req.param('email'); /* no email validation..  TODO */
@@ -16,7 +16,7 @@ app.post('/create', (req, res) => {
 	res.send(user['name'] + 'got added successfully');
 });
 
-app.post('/login', (req, res) => {
+router.post('/user/login', (req, res) => {
 		
 	if ((user['email'] == req.param('email'))  && user['password'] = req.param('password')) {
 		loggedin = true;
@@ -27,6 +27,15 @@ app.post('/login', (req, res) => {
 	}
 });
 
+router.post('/user/reset', (req, res) => {
+		
+	if (user['email'] == req.param('email')) {
+		loggedin = false;
+		router.redirect('/user/create'); /* recreate the user, in our case only one user, so /user/create should be fine */
+	} else {
+		loggedin = false;
+		res.send(user['name'] + 'is login failed');
+	}
+});
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
+module.exports = router
